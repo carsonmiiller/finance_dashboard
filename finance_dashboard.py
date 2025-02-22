@@ -54,7 +54,8 @@ st.pyplot(fig1)
 
 # **2. Asset Composition**
 st.header('Asset Composition Over Time')
-assets = ['Checking', 'Savings', 'Public Markets', 'Fid Labs', 'Anduril', '401K', 'HSA']
+# Dynamically populate assets as all columns except 'Date', 'Net Worth', and 'CC Balance'
+assets = [col for col in net_worth_df.columns if col not in ['Net Worth', 'CC Balance']]
 fig2, ax2 = plt.subplots(figsize=(10, 6))
 net_worth_df[assets].plot(kind='area', stacked=True, ax=ax2, alpha=0.6)
 ax2.set_title('Asset Composition Over Time', fontsize=14)
@@ -122,42 +123,26 @@ labels = [category for category in sorted_expenses.index]
 def custom_autopct(pct):
     return f'{int(np.round(pct))}%'
 
-# Define a consistent color mapping for categories
-color_map = {
-    'Rent': '#e1c4b2',        # Light tan – warm, neutral
-    'U&I': '#4a6b4a',         # Medium olive green – balanced, natural
-    'Dates': '#6a8e6a',       # Light olive green – soft, earthy
-    'Other Travel': '#8cb88c', # Pale green – subtle, fresh
-    'Misc': '#b2d4b2',        # Light green – neutral, background
-    'Groceries': '#d8e8d8',   # Very light green – minimal, understated
-    'Other': '#dff8df',       # Lightest green – soft, earthy
-    'Subscriptions': '#4f4444', # Dark brown – rich, professional
-    'Amazon': '#6d4c4c',      # Medium brown – warm, prominent
-    'Alcohol': '#414d1e',        # Dark olive green – deep, grounding
-    'Out to Eat': '#aba860',  # Pale brown – subtle, approachable
-    'Uber': '#9d7676',     # Light brown – gentle, earthy
-    'Flights': '#8b6f47',     # Dark mustard – bold, earthy
-    'Gifts': '#d9a06a',       # Warm yellow – bright, festive
-    # Add more categories as needed; defaults to a fallback color
-}
+# Use Matplotlib's tab20 colormap to assign colors dynamically
+colors = plt.cm.tab20(np.linspace(0, 1, len(sorted_expenses)))
+# Convert to HTML hex codes
+colors = [plt.matplotlib.colors.to_hex(color) for color in colors]
 
-# Get colors for the sorted categories, defaulting to a fallback color if not in map
-colors = [color_map.get(category, '#cccccc') for category in sorted_expenses.index]  # Fallback color: light gray
-
-# Create the pie chart with consistent colors
+# Create the pie chart with dynamic colors
 fig5, ax5 = plt.subplots(figsize=(10, 6))
 patches, texts, autotexts = ax5.pie(
     sorted_expenses,
     labels=labels,
     autopct=custom_autopct,
     startangle=30,
-    colors=colors  # Apply consistent colors
+    colors=colors  # Apply dynamic colors
 )
 
 # Set title and display the plot
 ax5.set_title(f'Expense Breakdown for {selected_date_str}', fontsize=14)
 plt.tight_layout()
 st.pyplot(fig5)
+
 # **5. Key Statistics with Time Frame Selection**
 st.header('Key Statistics')
 
