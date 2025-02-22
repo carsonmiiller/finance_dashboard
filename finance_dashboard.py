@@ -8,7 +8,7 @@ st.title('Personal Finance Dashboard')
 
 # Load data
 try:
-    net_worth_df = pd.read_csv('net_worth_example.csv')
+    net_worth_df = pd.read_csv('net_worth_example.csv', skiprows=1)
     expenses_df = pd.read_csv('expenses_example.csv')
 except FileNotFoundError:
     st.error("Please ensure 'net_worth.csv' and 'expenses.csv' are in the same directory as this script.")
@@ -19,14 +19,14 @@ except FileNotFoundError:
 net_worth_df['Date'] = pd.to_datetime(net_worth_df['Date'], format='%b %d, %Y')
 # Remove '$' and ',' from numerical columns and convert to float
 for col in net_worth_df.columns[1:]:
-    net_worth_df[col] = net_worth_df[col].replace('[\$,]', '', regex=True).astype(float)
+    net_worth_df[col] = net_worth_df[col].replace('[\$,"]', '', regex=True).astype(float)
 
 # Clean expenses data
 # Convert Date to datetime (format like "Aug '22")
 expenses_df['Date'] = pd.to_datetime(expenses_df['Date'], format="%b '%y")
 # Remove '$' and ',' from numerical columns and convert to float
 for col in expenses_df.columns[1:]:
-    expenses_df[col] = expenses_df[col].replace('[\$,]', '', regex=True).astype(float)
+    expenses_df[col] = expenses_df[col].replace('[\$,"]', '', regex=True).astype(float)
 
 # Set Date as index for easier plotting
 net_worth_df.set_index('Date', inplace=True)
